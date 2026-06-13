@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبارات | تقنيات انترنت متقدمة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --accent: #7c3aed;
+    --accent2: #a78bfa;
+    --green: #10b981;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --text: #e6edf3;
+    --text2: #8b949e;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Tajawal', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ========= HOME ========= */
+  #home {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: radial-gradient(ellipse at top, #1a0533 0%, var(--bg) 60%);
+  }
+
+  #home h1 {
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    font-weight: 900;
+    text-align: center;
+    background: linear-gradient(135deg, #a78bfa, #7c3aed, #c4b5fd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  #home .subtitle {
+    color: var(--text2);
+    font-size: 1rem;
+    margin-bottom: 48px;
+    text-align: center;
+  }
+
+  .chapters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .chapter-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: right;
+  }
+
+  .chapter-card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(124,58,237,0.2);
+  }
+
+  .chapter-num {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #5b21b6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 900;
+    flex-shrink: 0;
+    color: white;
+  }
+
+  .chapter-info h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .chapter-info p {
+    font-size: 0.8rem;
+    color: var(--text2);
+  }
+
+  /* ========= QUIZ ========= */
+  #quiz-screen {
+    display: none;
+    min-height: 100vh;
+    padding: 24px 16px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .back-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+
+  .back-btn:hover { border-color: var(--accent2); }
+
+  .quiz-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+
+  .progress-bar-wrap {
+    background: var(--surface);
+    border-radius: 99px;
+    height: 6px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  .q-counter {
+    color: var(--text2);
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 24px;
+    margin-bottom: 16px;
+  }
+
+  .question-text {
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  .option:hover:not(.disabled) {
+    border-color: var(--accent2);
+    background: #1e1337;
+  }
+
+  .option.correct {
+    border-color: var(--green);
+    background: rgba(16,185,129,0.1);
+    color: #6ee7b7;
+  }
+
+  .option.wrong {
+    border-color: var(--red);
+    background: rgba(239,68,68,0.1);
+    color: #fca5a5;
+  }
+
+  .option.disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    display: none;
+  }
+
+  .feedback.show { display: block; }
+  .feedback.correct-fb { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
+  .feedback.wrong-fb { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+
+  .nav-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #5b21b6);
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary:disabled { opacity: 0.4; cursor: default; }
+
+  /* ========= RESULT ========= */
+  #result-screen {
+    display: none;
+    min-height: 100vh;
+    padding: 40px 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .score-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: conic-gradient(var(--accent) var(--pct), var(--surface2) 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    position: relative;
+  }
+
+  .score-circle::before {
+    content: '';
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: var(--surface);
+    position: absolute;
+  }
+
+  .score-num {
+    position: relative;
+    z-index: 1;
+    font-size: 2rem;
+    font-weight: 900;
+  }
+
+  .result-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin-bottom: 8px;
+  }
+
+  .result-sub {
+    color: var(--text2);
+    margin-bottom: 32px;
+  }
+
+  .result-breakdown {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: right;
+    margin-bottom: 24px;
+  }
+
+  .result-breakdown h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 16px;
+  }
+
+  .rb-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+    gap: 12px;
+  }
+
+  .rb-item:last-child { border-bottom: none; }
+  .rb-item .q-text { color: var(--text2); flex: 1; line-height: 1.6; }
+  .rb-ok { color: var(--green); font-size: 1.1rem; }
+  .rb-no { color: var(--red); font-size: 1.1rem; }
+
+  .result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  .btn-secondary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover { border-color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home">
+  <h1>🎓 اختبارات تقنيات انترنت متقدمة</h1>
+  <p class="subtitle">إعداد المدربة / دانيه الموسى &nbsp;|&nbsp; اختر الشابتر اللي تبيه تختبر فيه</p>
+  <div class="chapters-grid" id="chaptersGrid"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz-screen">
+  <div class="quiz-header">
+    <button class="back-btn" onclick="goHome()">← رجوع</button>
+    <span class="quiz-title" id="quizTitle"></span>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  <div class="q-counter" id="qCounter"></div>
+  <div class="question-card">
+    <div class="question-text" id="questionText"></div>
+    <div class="options" id="optionsContainer"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+  <div class="nav-btns">
+    <button class="btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>التالي ←</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result-screen">
+  <div class="score-circle" id="scoreCircle">
+    <span class="score-num" id="scoreNum"></span>
+  </div>
+  <div class="result-title" id="resultTitle"></div>
+  <div class="result-sub" id="resultSub"></div>
+  <div class="result-breakdown">
+    <h3>مراجعة الإجابات</h3>
+    <div id="breakdownList"></div>
+  </div>
+  <div class="result-actions">
+    <button class="btn-primary" onclick="retryQuiz()">🔄 إعادة الاختبار</button>
+    <button class="btn-secondary" onclick="goHome()">🏠 الرئيسية</button>
+  </div>
+</div>
+
+<script>
+const CHAPTERS = [
+  {
+    id: 1,
+    title: "الشابتر 1 – HTML5",
+    sub: "مقدمة في HTML5، الهيكل، العناصر الجديدة",
+    questions: [
+      {
+        q: "ما الاختصار الكامل لـ HTML؟",
+        opts: ["Hyper Text Markup Language","High Text Markup Logic","Hyper Transfer Markup Language","Hyper Text Modern Language"],
+        ans: 0,
+        exp: "HTML اختصار Hyper Text Markup Language وتعني لغة توصيف صفحات الويب."
+      },
+      {
+        q: "HTML5 هي لغة برمجة. صح أم خطأ؟",
+        opts: ["صح، هي لغة برمجة متقدمة","خطأ، هي لغة توصيف وليست لغة برمجة","صح، تُستخدم لبرمجة الخوادم","خطأ، هي لغة تصميم فقط"],
+        ans: 1,
+        exp: "HTML ليست لغة برمجة، بل لغة توصيف (Markup) تُستخدم لبناء هيكل صفحة الويب."
+      },
+      {
+        q: "أي وسم يحتوي على جميع محتويات صفحة HTML بما فيها الرأس والجسم؟",
+        opts: ["<head>","<body>","<html>","<main>"],
+        ans: 2,
+        exp: "وسم <html> هو المنطقة الأم التي تحتوي على كل شيء في الصفحة."
+      },
+      {
+        q: "ما الوسم الذي يحتوي على المعلومات التي لا تظهر للمستخدم مثل عنوان الصفحة وربط CSS؟",
+        opts: ["<body>","<header>","<head>","<meta>"],
+        ans: 2,
+        exp: "منطقة <head> تضم معلومات لا تظهر على الصفحة مثل عنوان الصفحة وربط ملفات CSS وJavaScript."
+      },
+      {
+        q: "أي من التالي من العناصر الهيكلية الجديدة التي أضافتها HTML5؟",
+        opts: ["<div> و <span>","<header> و <footer> و <section>","<table> و <form>","<b> و <i>"],
+        ans: 1,
+        exp: "HTML5 أضافت عناصر هيكلية دلالية مثل header, footer, section, article, nav."
+      },
+      {
+        q: "ما اختصار SVG؟",
+        opts: ["Simple Vector Grid","Scalable Vector Graphics","Styled Visual Graphics","Structured Vector Guide"],
+        ans: 1,
+        exp: "SVG تعني Scalable Vector Graphics أي الرسومات المتجهة القابلة للتوسع."
+      },
+      {
+        q: "ما الميزة الرئيسية لرسومات SVG مقارنة بصور البكسل؟",
+        opts: ["حجمها أكبر وأوضح","قابلة للتكبير والتصغير دون فقدان الجودة","لا يمكن دمجها مع CSS","تدعم الألوان فقط"],
+        ans: 1,
+        exp: "SVG تعتمد على معادلات رياضية بدلاً من البكسلات، مما يجعلها قابلة للتكبير بجودة عالية دائماً."
+      },
+      {
+        q: "أي وسم يُستخدم لتضمين الفيديو في HTML5 بدون إضافات خارجية؟",
+        opts: ["<embed>","<media>","<video>","<flash>"],
+        ans: 2,
+        exp: "HTML5 قدمت وسم <video> لتشغيل مقاطع الفيديو مباشرة في المتصفح بدون Flash أو إضافات."
+      },
+      {
+        q: "أي نوع من Input الجديدة في HTML5 يتحقق تلقائياً من صحة البريد الإلكتروني؟",
+        opts: ["type=\"text\"","type=\"email\"","type=\"url\"","type=\"check\""],
+        ans: 1,
+        exp: "نوع المدخل email يضمن إدخال بريد إلكتروني صالح بالصيغة الصحيحة."
+      },
+      {
+        q: "أي نوع من Input يعطي شريط تمرير (Slider) لاختيار قيمة رقمية؟",
+        opts: ["number","range","slider","scale"],
+        ans: 1,
+        exp: "type=\"range\" يعطي شريطاً تمريرياً لتحديد قيمة بين حدين."
+      },
+      {
+        q: "متى ظهرت لغة HTML لأول مرة؟",
+        opts: ["1989","1994","1999","2005"],
+        ans: 2,
+        exp: "ظهرت HTML لأول مرة عام 1999، ومع تطور Web 2.0 ظهرت الحاجة لـ HTML5."
+      },
+      {
+        q: "ما الذي تُستخدم فيه CSS في تطوير الويب؟",
+        opts: ["بناء هيكل الصفحة","التنسيق والمظهر","إضافة التفاعلية","إدارة قواعد البيانات"],
+        ans: 1,
+        exp: "CSS تُستخدم للتنسيق والمظهر، بينما HTML للهيكل وJavaScript للتفاعلية."
+      },
+      {
+        q: "ما وسم الصوت في HTML5؟",
+        opts: ["<sound>","<music>","<audio>","<voice>"],
+        ans: 2,
+        exp: "وسم <audio> يُستخدم لتضمين ملفات الصوت في HTML5."
+      },
+      {
+        q: "أي متصفح لا تدعمه HTML5؟",
+        opts: ["Google Chrome","Mozilla Firefox","Internet Explorer 6","Safari"],
+        ans: 2,
+        exp: "HTML5 تعمل على المتصفحات الحديثة مثل Chrome وFirefox وSafari وEdge. المتصفحات القديمة جداً مثل IE6 لا تدعمها بالكامل."
+      },
+      {
+        q: "أي عنصر HTML5 يُستخدم للرسم ثنائي الأبعاد برمجياً عبر JavaScript؟",
+        opts: ["<svg>","<canvas>","<draw>","<graphic>"],
+        ans: 1,
+        exp: "عنصر <canvas> يُستخدم للرسم الديناميكي عبر JavaScript، بينما <svg> للرسومات المتجهة الثابتة."
+      }
+    ]
+  },
+  {
+    id: 2,
+    title: "الشابتر 2 – CSS3",
+    sub: "أنماط الصفحة، Box Model، Flexbox، التأثيرات",
+    questions: [
+      {
+        q: "ما الاختصار الكامل لـ CSS؟",
+        opts: ["Cascading Style Sheets","Custom Style Structures","Creative Styling Syntax","Colored Sheet Standards"],
+        ans: 0,
+        exp: "CSS تعني Cascading Style Sheets أي صفحات الأنماط الانسيابية."
+      },
+      {
+        q: "كم طريقة لإدراج CSS في صفحة HTML؟",
+        opts: ["2 طرق","3 طرق","4 طرق","5 طرق"],
+        ans: 1,
+        exp: "3 طرق: ملف خارجي External، ملف داخلي Internal (في <style>)، ومتداخل Inline (داخل الوسم مباشرة)."
+      },
+      {
+        q: "ما أفضل طريقة لإدارة تنسيق موقع كامل متعدد الصفحات؟",
+        opts: ["Inline Style","Internal Style Sheet","External Style Sheet","كلها متساوية"],
+        ans: 2,
+        exp: "الملف الخارجي External Style Sheet هو الأفضل لأنه يُطبق على جميع الصفحات من مكان واحد."
+      },
+      {
+        q: "ما ترتيب مناطق Box Model من الداخل للخارج؟",
+        opts: ["Margin → Border → Padding → Content","Content → Padding → Border → Margin","Padding → Content → Border → Margin","Border → Content → Padding → Margin"],
+        ans: 1,
+        exp: "الترتيب: Content (المحتوى) → Padding (هامش داخلي) → Border (حدود) → Margin (هامش خارجي)."
+      },
+      {
+        q: "ما خاصية CSS التي تُحوّل العنصر إلى حاوية Flexbox؟",
+        opts: ["flex: true","display: flex","layout: flex","position: flex"],
+        ans: 1,
+        exp: "display: flex تُحوّل العنصر إلى حاوية مرنة تُتيح التحكم في توزيع العناصر الداخلية."
+      },
+      {
+        q: "ما وظيفة خاصية justify-content في Flexbox؟",
+        opts: ["التحكم في محاذاة العناصر عمودياً","التحكم في محاذاة العناصر أفقياً","تغيير حجم العناصر","تحديد اتجاه الحاوية"],
+        ans: 1,
+        exp: "justify-content يتحكم في المحاذاة الأفقية للعناصر داخل الحاوية المرنة."
+      },
+      {
+        q: "ما خاصية flex-direction التي ترتب العناصر في عمود عمودي؟",
+        opts: ["row","column","wrap","block"],
+        ans: 1,
+        exp: "flex-direction: column ترتب العناصر بشكل عمودي (من أعلى لأسفل)."
+      },
+      {
+        q: "أي خاصية CSS3 تُضيف ظلاً للنص؟",
+        opts: ["box-shadow","text-shadow","outline","opacity"],
+        ans: 1,
+        exp: "text-shadow تُضيف ظلاً للنص مع التحكم في الاتجاه والانتشار واللون."
+      },
+      {
+        q: "ما وظيفة @font-face في CSS3؟",
+        opts: ["تغيير حجم الخط","استخدام خط خارجي غير مثبت على الجهاز","تحديد لون الخط","تغيير نوع الخط إلى عريض"],
+        ans: 1,
+        exp: "@font-face تتيح استخدام خطوط مخصصة من الويب حتى لو لم تكن مثبتة على جهاز المستخدم."
+      },
+      {
+        q: "ما وظيفة RGBA في CSS3؟",
+        opts: ["تحديد لون الخلفية فقط","تحديد لون مع درجة شفافية","تطبيق تأثيرات على الصور","إضافة حدود ملونة"],
+        ans: 1,
+        exp: "RGBA يتيح تحديد لون مع درجة شفافية (A = Alpha) بين 0 و 1."
+      },
+      {
+        q: "أي خاصية تجعل التغيير في خصائص العنصر يحدث بشكل تدريجي وليس مفاجئاً؟",
+        opts: ["Transform","Animation","Transition","Filter"],
+        ans: 2,
+        exp: "خاصية Transition تجعل التغييرات تحدث بشكل انتقالي تدريجي بدلاً من القفز المباشر."
+      },
+      {
+        q: "ما وظيفة transform: rotate() في CSS3؟",
+        opts: ["تكبير العنصر","تدوير العنصر بدرجات معينة","تحريك العنصر أفقياً","إمالة العنصر"],
+        ans: 1,
+        exp: "transform: rotate() تُدوّر العنصر بعدد الدرجات المحددة."
+      },
+      {
+        q: "ما Viewport في CSS؟",
+        opts: ["ملف CSS الرئيسي","المنطقة المرئية من الصفحة على شاشة المستخدم","حجم الصورة","عرض الصفحة الكامل"],
+        ans: 1,
+        exp: "Viewport هو المنطقة المرئية من الصفحة على شاشة الجهاز، ويختلف حجمه بحسب الجهاز."
+      },
+      {
+        q: "ما الفرق بين Padding والـ Margin في Box Model؟",
+        opts: ["لا فرق بينهما","Padding هو الهامش الداخلي، Margin هو الهامش الخارجي","Margin هو الهامش الداخلي، Padding هو الخارجي","Padding هو الحدود، Margin هو المحتوى"],
+        ans: 1,
+        exp: "Padding = هامش داخلي بين المحتوى والحدود. Margin = هامش خارجي بين العنصر والعناصر الأخرى."
+      },
+      {
+        q: "ما خاصية filter في CSS3؟",
+        opts: ["تُضيف إطاراً للعنصر","تُطبّق تأثيرات بصرية مثل التمويه والوضوح على العناصر","تُغير حجم العنصر","تُحدد لون الخلفية"],
+        ans: 1,
+        exp: "خاصية filter تُضيف تأثيرات بصرية على الصور والعناصر مثل blur وbrightness وcontrast."
+      }
+    ]
+  },
+  {
+    id: 3,
+    title: "الشابتر 3 – النماذج وواجهة التطبيقات",
+    sub: "Form API، أنواع المدخلات، خصائص النماذج",
+    questions: [
+      {
+        q: "ما وسم HTML الأساسي لإنشاء نموذج داخل صفحة الويب؟",
+        opts: ["<input>","<form>","<fieldset>","<data>"],
+        ans: 1,
+        exp: "وسم <form> هو العنصر الأساسي لإنشاء النموذج، يجمع مجموعة الحقول التي يُدخل فيها المستخدم بياناته."
+      },
+      {
+        q: "ما السمة التي تُحدد طريقة إرسال البيانات في نموذج HTML (GET أو POST)؟",
+        opts: ["action","method","target","enctype"],
+        ans: 1,
+        exp: "سمة method تُحدد طريقة الإرسال: GET أو POST. سمة action تُحدد وجهة البيانات."
+      },
+      {
+        q: "ما الخاصية التي تجعل الحقل إلزامياً ولا يمكن إرسال النموذج بدون تعبئته؟",
+        opts: ["Autofocus","Placeholder","Required","Multiple"],
+        ans: 2,
+        exp: "خاصية Required تجعل الحقل إلزامياً ولا يُسمح بإرسال النموذج حتى يُملأ."
+      },
+      {
+        q: "ما خاصية Autocomplete في HTML5؟",
+        opts: ["تملأ الحقل تلقائياً من قاعدة البيانات","تقترح القيم السابقة التي أدخلها المستخدم في نفس الحقل","تمنع المستخدم من الكتابة","تتحقق تلقائياً من صحة البيانات"],
+        ans: 1,
+        exp: "Autocomplete تُمكّن المتصفح من اقتراح القيم التي أدخلها المستخدم سابقاً في نفس الحقل."
+      },
+      {
+        q: "ما وظيفة Placeholder في حقول النماذج؟",
+        opts: ["تجعل الحقل إلزامياً","تعرض نصاً إرشادياً داخل الحقل لتوضيح نوع البيانات","تنقل المؤشر للحقل تلقائياً","تسمح بإدخال قيم متعددة"],
+        ans: 1,
+        exp: "Placeholder يعرض نصاً توضيحياً داخل الحقل يختفي عند بدء الكتابة."
+      },
+      {
+        q: "ما خاصية Autofocus في نماذج HTML5؟",
+        opts: ["تملأ الحقل تلقائياً","تجعل الحقل مقروءاً فقط","تنقل المؤشر تلقائياً إلى الحقل عند تحميل الصفحة","تُخفي الحقل"],
+        ans: 2,
+        exp: "Autofocus تضع المؤشر في الحقل المحدد فور تحميل الصفحة لتسريع الإدخال."
+      },
+      {
+        q: "ما خاصية Multiple في نماذج HTML5؟",
+        opts: ["تُكرر الحقل","تسمح بإدخال أكثر من قيمة في نفس الحقل كرفع عدة ملفات","تُضيف حقولاً إضافية تلقائياً","تجعل الحقل متعدد الصفوف"],
+        ans: 1,
+        exp: "Multiple تتيح إدخال قيم متعددة في حقل واحد مثل رفع عدة ملفات دفعةً واحدة."
+      },
+      {
+        q: "ما الفرق الرئيسي بين User Interface (UI) و API؟",
+        opts: ["لا فرق بينهما","UI واجهة بين المستخدم والبرنامج، API واجهة بين البرامج نفسها","API أسهل من UI","UI للمبرمجين فقط"],
+        ans: 1,
+        exp: "UI تُسهّل على المستخدم استخدام البرنامج. API تُسهّل على المطورين التواصل بين التطبيقات المختلفة."
+      },
+      {
+        q: "ما الذي يتحكم فيه وسم <input> بواسطة سمة type؟",
+        opts: ["شكل الحقل فقط","نوع البيانات المطلوبة في الحقل","لون الحقل","حجم الحقل"],
+        ans: 1,
+        exp: "سمة type في <input> تحدد نوع البيانات المطلوبة مثل text, email, number, date, color."
+      },
+      {
+        q: "أي نوع Input يفتح منتقي تاريخ (Calendar) للمستخدم؟",
+        opts: ["type=\"time\"","type=\"calendar\"","type=\"date\"","type=\"number\""],
+        ans: 2,
+        exp: "type=\"date\" يفتح تقويماً لاختيار التاريخ مباشرة."
+      },
+      {
+        q: "ما ميزة إرسال البيانات عبر AJAX في النماذج الحديثة؟",
+        opts: ["يعيد تحميل الصفحة بالكامل","يرسل البيانات دون إعادة تحميل الصفحة","يُوقف الصفحة","يُرسل البيانات بشكل مشفر"],
+        ans: 1,
+        exp: "AJAX يرسل البيانات للخادم في الخلفية دون الحاجة لإعادة تحميل الصفحة مما يجعل التجربة أسرع."
+      },
+      {
+        q: "لماذا يُنصح باستخدام Labels واضحة مع حقول النماذج؟",
+        opts: ["لجعل الصفحة أطول","لتحسين تجربة المستخدم وتقليل أخطاء الإدخال","لإضافة ألوان للحقول","لمنع الإدخال الخاطئ برمجياً"],
+        ans: 1,
+        exp: "Labels توضح للمستخدم ما الذي يجب إدخاله في كل حقل مما يُقلل الأخطاء ويُحسّن تجربة الاستخدام."
+      },
+      {
+        q: "أي type في HTML5 يتحقق تلقائياً من صحة URL المُدخل؟",
+        opts: ["type=\"link\"","type=\"url\"","type=\"web\"","type=\"href\""],
+        ans: 1,
+        exp: "type=\"url\" يتحقق من أن الرابط المُدخل يتبع صيغة URL صحيحة."
+      },
+      {
+        q: "ما العنصر داخل النموذج الذي يتفاعل مع المستخدم مباشرةً لإدخال البيانات؟",
+        opts: ["<form>","<input>","<label>","<button>"],
+        ans: 1,
+        exp: "وسم <input> هو الحقل الذي يتفاعل معه المستخدم مباشرةً لإدخال بياناته."
+      }
+    ]
+  },
+  {
+    id: 4,
+    title: "الشابتر 4 – SQL Workshop",
+    sub: "Oracle APEX، Object Browser، SQL Commands",
+    questions: [
+      {
+        q: "ما هو SQL Workshop في Oracle APEX؟",
+        opts: ["أداة لتصميم واجهة المستخدم","بيئة تفاعلية للتعامل مع قاعدة البيانات عبر SQL وواجهات رسومية","أداة لرفع الملفات","مُحرر الصفحات"],
+        ans: 1,
+        exp: "SQL Workshop بيئة تفاعلية توفر إمكانيات التعامل مع قاعدة البيانات من خلال أوامر SQL أو واجهات رسومية."
+      },
+      {
+        q: "ما أداة Object Browser في SQL Workshop؟",
+        opts: ["لكتابة أوامر SQL","الواجهة الرسومية لاستعراض ومكونات قاعدة البيانات دون كتابة كود","لتشغيل ملفات SQL خارجية","لاستيراد البيانات"],
+        ans: 1,
+        exp: "Object Browser واجهة رسومية تُمكّن المستخدم من استعراض الجداول والمكونات والتحكم بها دون كتابة أكواد."
+      },
+      {
+        q: "ما أداة SQL Commands في SQL Workshop؟",
+        opts: ["لعرض الجداول بشكل مرئي","لتنفيذ أوامر SQL مباشرة","لتشغيل ملفات SQL","لإدارة المستخدمين"],
+        ans: 1,
+        exp: "SQL Commands تُتيح كتابة وتنفيذ أوامر SQL مباشرةً مثل SELECT و INSERT و CREATE."
+      },
+      {
+        q: "ما نوع البيانات VARCHAR2 في Oracle؟",
+        opts: ["لتخزين الأرقام الصحيحة","لتخزين النصوص","لتخزين التواريخ","لتخزين الصور"],
+        ans: 1,
+        exp: "VARCHAR2 يُستخدم لتخزين النصوص ذات الطول المتغير في Oracle."
+      },
+      {
+        q: "أي أمر SQL يُستخدم لإنشاء جدول جديد في قاعدة البيانات؟",
+        opts: ["INSERT","SELECT","CREATE","ADD"],
+        ans: 2,
+        exp: "أمر CREATE TABLE يُستخدم لإنشاء جدول جديد في قاعدة البيانات."
+      },
+      {
+        q: "أي أمر SQL يُستخدم لاسترجاع البيانات من جدول؟",
+        opts: ["GET","FETCH","SELECT","RETRIEVE"],
+        ans: 2,
+        exp: "أمر SELECT هو الأمر الأساسي لاسترجاع البيانات من الجداول."
+      },
+      {
+        q: "أي أمر SQL يُستخدم لإضافة سجل جديد إلى جدول؟",
+        opts: ["ADD","INSERT","CREATE","UPDATE"],
+        ans: 1,
+        exp: "أمر INSERT يُستخدم لإضافة صفوف جديدة (سجلات) إلى جدول موجود."
+      },
+      {
+        q: "أي أمر SQL يُستخدم لتعديل بيانات موجودة في جدول؟",
+        opts: ["MODIFY","CHANGE","UPDATE","ALTER"],
+        ans: 2,
+        exp: "أمر UPDATE يُستخدم لتعديل قيم صفوف موجودة في الجدول."
+      },
+      {
+        q: "أي أمر SQL يُستخدم لحذف جدول بالكامل من قاعدة البيانات؟",
+        opts: ["DELETE","REMOVE","DROP","CLEAR"],
+        ans: 2,
+        exp: "أمر DROP يحذف الجدول بالكامل من قاعدة البيانات، بينما DELETE يحذف صفوفاً فقط."
+      },
+      {
+        q: "ما أداة SQL Scripts في SQL Workshop؟",
+        opts: ["لاستعراض مكونات قاعدة البيانات","لكتابة أوامر SQL يدوياً","لرفع وتشغيل ملفات SQL خارجية","لإدارة المستخدمين"],
+        ans: 2,
+        exp: "SQL Scripts تتيح رفع وتشغيل ملفات SQL تحتوي على مجموعة أوامر SQL جاهزة."
+      },
+      {
+        q: "ما ميزة Object Browser في إدارة العلاقات بين الجداول؟",
+        opts: ["لا تدعم العلاقات","يمكن تصفح العلاقات بين الجداول ومشاهدة البنية الكاملة بشكل مرئي","تنشئ العلاقات تلقائياً","تحذف العلاقات الخاطئة"],
+        ans: 1,
+        exp: "Object Browser يتيح تصفح العلاقات بين الجداول ومشاهدة البنية الكاملة لقواعد البيانات بشكل مرئي."
+      },
+      {
+        q: "ما نوع البيانات DATE في Oracle؟",
+        opts: ["لتخزين النصوص","لتخزين الأرقام","لتخزين التاريخ والوقت","لتخزين الملفات"],
+        ans: 2,
+        exp: "نوع البيانات DATE يُستخدم لتخزين التاريخ والوقت في Oracle."
+      },
+      {
+        q: "ما المقصود بـ Primary Key في جدول قاعدة البيانات؟",
+        opts: ["عمود يسمح بالقيم المكررة","عمود فريد يُعرّف كل صف بشكل فريد لا يتكرر","عمود اختياري","عمود يربط بجدول آخر"],
+        ans: 1,
+        exp: "المفتاح الأساسي Primary Key عمود فريد لكل صف، يُعرّفه بشكل فريد ولا يمكن أن يتكرر أو يكون فارغاً."
+      },
+      {
+        q: "كيف يمكن الوصول إلى SQL Workshop من داخل Oracle APEX؟",
+        opts: ["من قائمة Reports","من الصفحة الرئيسية عبر اختيار SQL Workshop","من App Builder","من Admin Console"],
+        ans: 1,
+        exp: "بعد تسجيل الدخول إلى APEX، يمكن الوصول إلى SQL Workshop من خلال الصفحة الرئيسية أو القائمة الجانبية."
+      }
+    ]
+  },
+  {
+    id: 5,
+    title: "الشابتر 5 – بناء التطبيقات والمناطق",
+    sub: "App Builder، Page Designer، Regions",
+    questions: [
+      {
+        q: "ما وظيفة Application Builder في Oracle APEX؟",
+        opts: ["إدارة قواعد البيانات","الأداة الأساسية لإنشاء التطبيقات وإدارتها في APEX","عرض التقارير","كتابة أوامر SQL"],
+        ans: 1,
+        exp: "Application Builder هي الأداة الأساسية في APEX لإنشاء التطبيقات وإدارتها وتعديلها."
+      },
+      {
+        q: "ما اللبنة الأساسية لأي تطبيق في App Builder؟",
+        opts: ["Region","Button","Page","Item"],
+        ans: 2,
+        exp: "الصفحة Page هي اللبنة الأساسية لأي تطبيق في APEX، وكل صفحة تحتوي على عناصر UI."
+      },
+      {
+        q: "ما المنطقة (Region) في APEX؟",
+        opts: ["زر يُنفّذ عملية","حاوية لعرض محتوى أو عناصر داخل الصفحة","حقل إدخال","قائمة تنقل"],
+        ans: 1,
+        exp: "المنطقة Region وحدة تنظيمية تعمل كحاوية Container لعرض المحتوى أو العناصر داخل صفحة التطبيق."
+      },
+      {
+        q: "كم جزءاً رئيسياً تنقسم إليه واجهة Page Designer في APEX؟",
+        opts: ["2 أجزاء","3 أجزاء","4 أجزاء","5 أجزاء"],
+        ans: 1,
+        exp: "Page Designer تنقسم إلى 3 أجزاء: Left Pane (شجرة المكونات) وCentral Pane (تخطيط الصفحة) وRight Pane (محرر الخصائص)."
+      },
+      {
+        q: "ما وظيفة الجزء الأيسر (Left Pane) في Page Designer؟",
+        opts: ["عرض التخطيط المرئي للصفحة","عرض الهيكل الهرمي لجميع مكونات الصفحة","التحكم في خصائص كل مكون","عرض رسائل الأخطاء"],
+        ans: 1,
+        exp: "Left Pane يعرض Component Tree: الهيكل الهرمي لجميع مكونات الصفحة مثل Regions وItems وButtons."
+      },
+      {
+        q: "ما وظيفة الجزء الأيمن (Right Pane) في Page Designer؟",
+        opts: ["عرض التخطيط المرئي","شجرة المكونات","محرر الخصائص للتحكم في خصائص كل مكون","قائمة إنشاء مكونات جديدة"],
+        ans: 2,
+        exp: "Right Pane = Property Editor يُتيح التحكم في خصائص المكونات مثل الاسم واللون والتخطيط والأمان."
+      },
+      {
+        q: "ما الفرق بين Normal Pages وDialog Pages في APEX؟",
+        opts: ["لا فرق","Normal تُعرض بالكامل في المتصفح، Dialog تظهر كنافذة منبثقة","Dialog هي الصفحات الأسرع","Normal تُستخدم للأمان فقط"],
+        ans: 1,
+        exp: "Normal Pages تعرض المحتوى بشكل كامل. Dialog Pages تظهر كنوافذ منبثقة دون مغادرة الصفحة الأصلية."
+      },
+      {
+        q: "ما الفرق بين Modal Dialog وNon-Modal Dialog؟",
+        opts: ["لا فرق بينهما","Modal يمنع التفاعل مع الصفحة حتى إغلاقه، Non-Modal يسمح بالتفاعل مع الصفحة","Non-Modal هو الأسرع","Modal للمبتدئين فقط"],
+        ans: 1,
+        exp: "Modal Dialog يمنع التفاعل مع باقي الصفحة حتى إغلاقه. Non-Modal يسمح للمستخدم بالتفاعل مع الصفحة الأصلية أثناء فتحه."
+      },
+      {
+        q: "ما أنواع المناطق (Region Types) في APEX؟",
+        opts: ["نوع واحد فقط","Static Content وReport وChart وForm وPL/SQL Dynamic Content وغيرها","نوعان فقط: Static وDynamic","3 أنواع فقط"],
+        ans: 1,
+        exp: "أنواع المناطق: Static Content وReport Region وChart Region وForm Region وPL/SQL Dynamic Content."
+      },
+      {
+        q: "ما ميزة Developer Toolbar في APEX؟",
+        opts: ["تُستخدم لتسجيل الدخول","تظهر أسفل الصفحة عند تشغيل التطبيق وتُتيح للمطور تعديل الصفحة الحالية","تُظهر الأخطاء فقط","تُدير قاعدة البيانات"],
+        ans: 1,
+        exp: "Developer Toolbar تظهر أسفل الصفحة عند تشغيلها من App Builder وتُتيح تعديل الصفحة واستعراض Session State."
+      },
+      {
+        q: "ما الزر الذي يحفظ التغييرات ويشغّل الصفحة فوراً في Page Designer؟",
+        opts: ["Save","Run Page","Save and Run Page","Preview"],
+        ans: 2,
+        exp: "زر 'Save and Run Page' يحفظ التغييرات ويُشغّل الصفحة مباشرةً لاختبار النتائج."
+      },
+      {
+        q: "ما الذي يحدث عند حذف صفحة في APEX؟",
+        opts: ["يُحذف فقط عنوان الصفحة","يُحذف الصفحة وجميع مكوناتها من Regions وItems وButtons","تبقى المكونات لكن الصفحة تختفي","لا يمكن حذف الصفحات"],
+        ans: 1,
+        exp: "عند حذف صفحة في APEX يُحذف جميع مكوناتها المرتبطة بها، لذا يجب الحذر والتأكد من عدم وجود ارتباطات."
+      },
+      {
+        q: "ما وظيفة Template في إعدادات المنطقة (Region)؟",
+        opts: ["تُحدد نوع البيانات","يتحكم في المظهر العام للمنطقة من حجم ولون وحدود","يُحدد موضع المنطقة في الكود","يُنشئ المنطقة تلقائياً"],
+        ans: 1,
+        exp: "Template هو العنصر الذي يتحكم في المظهر العام للمنطقة بما في ذلك الحجم والموقع واللون والحدود."
+      },
+      {
+        q: "ما معالج إنشاء الصفحة (Create Page Wizard) في APEX؟",
+        opts: ["أداة لكتابة الكود","يوجه المستخدم خطوة بخطوة لتحديد إعدادات الصفحة الجديدة","يُنشئ قاعدة بيانات جديدة","يُصدّر التطبيق"],
+        ans: 1,
+        exp: "Create Page Wizard يوجّه المستخدم خطوةً بخطوة لتحديد نوع الصفحة وإعداداتها عند إنشاء صفحة جديدة."
+      }
+    ]
+  },
+  {
+    id: 6,
+    title: "الشابتر 6 – إنشاء التقارير",
+    sub: "أنواع التقارير في Oracle APEX",
+    questions: [
+      {
+        q: "ما عدد أنواع التقارير الأساسية في Application Builder في APEX؟",
+        opts: ["2","3","4","6"],
+        ans: 2,
+        exp: "4 أنواع أساسية: Interactive Report وInteractive Grid وClassic Report وReport and Form."
+      },
+      {
+        q: "ما التقرير الكلاسيكي (Classic Report)؟",
+        opts: ["تقرير يتيح التعديل المباشر","النموذج الأبسط لعرض بيانات ثابتة بدون تفاعل مباشر من المستخدم","تقرير متقدم بكل الميزات","تقرير مع نموذج مزدوج"],
+        ans: 1,
+        exp: "Classic Report هو الأبسط ويُستخدم لعرض بيانات ثابتة أو للعمليات التي لا تحتاج تفاعلاً مباشراً."
+      },
+      {
+        q: "ما ميزة التقرير التفاعلي (Interactive Report) التي لا تتوفر في التقرير الكلاسيكي؟",
+        opts: ["يعرض بيانات","يعمل مع SQL","يتيح للمستخدم تخصيص العرض والفلاتر والفرز بحرية","يعرض في جدول"],
+        ans: 2,
+        exp: "Interactive Report يتيح للمستخدم النهائي تخصيص العرض: إخفاء الأعمدة والفرز والفلتر والبحث بحرية."
+      },
+      {
+        q: "ما الشبكة التفاعلية (Interactive Grid)؟",
+        opts: ["نفس التقرير التفاعلي","تطوير متقدم يجمع بين عرض البيانات وتعديلها مباشرة داخل الشبكة","تقرير كلاسيكي متقدم","نموذج بسيط"],
+        ans: 1,
+        exp: "Interactive Grid تجمع بين عرض البيانات ومعالجتها (تعديل وحذف وإضافة) مباشرةً في واجهة واحدة."
+      },
+      {
+        q: "ما ميزة التحرير المباشر In-place Editing في Interactive Grid؟",
+        opts: ["يُعدّل البيانات في نافذة منفصلة","يُعدّل القيم مباشرة داخل الشبكة دون الانتقال لنموذج آخر","يُعدّل قاعدة البيانات فقط","يُعدّل شكل الصفحة"],
+        ans: 1,
+        exp: "In-place Editing يُتيح تعديل القيم مباشرةً داخل خلايا الشبكة دون الحاجة للانتقال لصفحة نموذج منفصلة."
+      },
+      {
+        q: "ما Report and Form في APEX؟",
+        opts: ["تقرير فقط","نموذج فقط","نموذج مزدوج يجمع بين عرض البيانات في تقرير وتعديل السجل في نموذج","تقرير ثابت"],
+        ans: 2,
+        exp: "Report and Form نموذج مزدوج يتكون من صفحة تقرير لعرض السجلات وصفحة نموذج لتعديل كل سجل على حدة."
+      },
+      {
+        q: "ما قيد Report and Form بخصوص عدد الأعمدة؟",
+        opts: ["لا حد","لا يدعم الجداول التي تحتوي على أكثر من 127 عموداً","لا يدعم أكثر من 50 عموداً","لا يدعم أكثر من 200 عمود"],
+        ans: 1,
+        exp: "Report and Form لا يدعم الجداول التي تحتوي على أكثر من 127 عموداً، ويُنصح باستخدام Interactive Grid للجداول الكبيرة."
+      },
+      {
+        q: "ما قائمة Actions Menu في التقرير التفاعلي؟",
+        opts: ["قائمة لحذف التقرير","تحتوي على خيارات مثل تنسيق الأعمدة والتصدير وإنشاء الرسوم البيانية","قائمة لإضافة صفحات","قائمة للأمان"],
+        ans: 1,
+        exp: "قائمة Actions Menu في Interactive Report تحتوي على تنسيق الأعمدة والتصدير لـ Excel وPDF وإنشاء Charts."
+      },
+      {
+        q: "أي نوع تقارير لديه قابلية تفاعل منخفضة؟",
+        opts: ["Interactive Report","Interactive Grid","Classic Report","Report and Form"],
+        ans: 2,
+        exp: "Classic Report لديه قابلية تفاعل منخفضة لأنه يعرض بيانات ثابتة دون إمكانية تخصيص المستخدم."
+      },
+      {
+        q: "ما التقنيات التي تعتمد عليها Shebaka التفاعلية (Interactive Grid)؟",
+        opts: ["PHP وMySQL","JavaScript وHTML5","Python وDjango","CSS فقط"],
+        ans: 1,
+        exp: "Interactive Grid تستخدم JavaScript وHTML5 لتقديم أداء عالٍ وتجربة مشابهة لتطبيقات سطح المكتب."
+      },
+      {
+        q: "في Report and Form ما وظيفة رابط Edit Link داخل صفوف التقرير؟",
+        opts: ["يحذف الصف","يُكرر الصف","ينقل المستخدم إلى صفحة النموذج لتعديل ذلك السجل","يُخفي الصف"],
+        ans: 2,
+        exp: "Edit Link في كل صف ينقل المستخدم إلى صفحة النموذج Form Page الخاصة بهذا السجل لتعديله."
+      },
+      {
+        q: "ما الأساس الذي يقوم عليه أي تقرير في APEX؟",
+        opts: ["ملف HTML","استعالم SQL (SELECT) يعرض البيانات من قاعدة البيانات","جدول Excel","ملف CSV"],
+        ans: 1,
+        exp: "التقرير في جوهره هو نتيجة منسقة لاستعلام SQL (عادةً SELECT) يُعدّ مسبقاً ويعرض البيانات في واجهة مرئية."
+      },
+      {
+        q: "أي نوع تقارير مثالي للتحليل واستكشاف البيانات؟",
+        opts: ["Classic Report","Interactive Grid","Interactive Report","Report and Form"],
+        ans: 2,
+        exp: "Interactive Report مثالي للتحليل لأن المستخدم يستطيع تطبيق فلاتر وفرز وبحث وتصدير دون تدخل المطور."
+      }
+    ]
+  },
+  {
+    id: 7,
+    title: "الشابتر 7 – المكونات المشتركة",
+    sub: "Shared Components، Session State",
+    questions: [
+      {
+        q: "ما المكونات المشتركة (Shared Components) في APEX؟",
+        opts: ["مكونات خاصة بصفحة واحدة","عناصر عامة تُستخدم في أكثر من صفحة داخل التطبيق","إعدادات قاعدة البيانات","أكواد JavaScript المشتركة"],
+        ans: 1,
+        exp: "Shared Components هي عناصر عامة تُستخدم في أكثر من صفحة ويمكن تطبيقها أو تعديلها على مستوى التطبيق كاملاً."
+      },
+      {
+        q: "كم منطقة رئيسية تحتوي عليها صفحة Shared Components؟",
+        opts: ["3","4","5","6"],
+        ans: 2,
+        exp: "5 مناطق رئيسية: Application Logic وNavigation وSecurity وUser Interface وFiles."
+      },
+      {
+        q: "ما منطقة Application Logic في Shared Components؟",
+        opts: ["إعدادات شكل التطبيق","يشمل Application Items وApplication Processes والحسابات Computations","إعدادات التنقل","قوائم الملاحة"],
+        ans: 1,
+        exp: "Application Logic تشمل العناصر المنطقية مثل Application Items وApplication Processes والحسابات Computations."
+      },
+      {
+        q: "ما منطقة Navigation في Shared Components؟",
+        opts: ["إعدادات الأمان","يتضمن القوائم Lists للتنقل بين صفحات التطبيق","الثيمات والتصميم","ملفات CSS"],
+        ans: 1,
+        exp: "Navigation تتضمن القوائم Lists التي تُستخدم للتنقل بين صفحات التطبيق وقوالب القوائم."
+      },
+      {
+        q: "ما منطقة User Interface في Shared Components؟",
+        opts: ["إدارة المستخدمين","يتضمن الثيمات Themes التي تحدد شكل وتصميم التطبيق","إعدادات SQL","الصور المرفوعة"],
+        ans: 1,
+        exp: "User Interface تحتوي على الثيمات Themes وهي تصاميم جاهزة تحدد شكل وقوالب التطبيق بالكامل."
+      },
+      {
+        q: "ما حالة الجلسة (Session State) في APEX؟",
+        opts: ["حالة الصفحة عند الإغلاق","المعلومات التي يحتفظ بها الخادم أثناء تفاعل المستخدم مع التطبيق","حجم ذاكرة الخادم","سجل أخطاء التطبيق"],
+        ans: 1,
+        exp: "Session State هي المعلومات التي يحتفظ بها الخادم مؤقتاً لكل مستخدم أثناء تفاعله مع التطبيق."
+      },
+      {
+        q: "ما Session ID في APEX؟",
+        opts: ["رقم الصفحة","رقم فريد لكل جلسة مستخدم يُميّزها عن جلسات المستخدمين الآخرين","رقم الجدول","رقم التطبيق"],
+        ans: 1,
+        exp: "Session ID رقم فريد لكل مستخدم يربط بين المتصفح والخادم ويضمن أن البيانات تخص المستخدم الصحيح."
+      },
+      {
+        q: "ما الفرق بين Submit وRedirect في APEX؟",
+        opts: ["لا فرق","Submit ينقل بيانات الصفحة للخادم للمعالجة، Redirect يوجّه المستخدم لصفحة أخرى","Redirect يحفظ البيانات فقط","Submit ينتقل لصفحة أخرى"],
+        ans: 1,
+        exp: "Submit: ينقل بيانات الصفحة للخادم لتخزينها ومعالجتها. Redirect: يوجّه المستخدم لصفحة أخرى بعد تنفيذ العملية."
+      },
+      {
+        q: "كيف يمكن الوصول إلى Shared Components من داخل APEX؟",
+        opts: ["من قائمة SQL Workshop","من App Builder → اسم التطبيق → Shared Components","من Admin Console","من Page Designer مباشرة"],
+        ans: 1,
+        exp: "المسار: App Builder → اسم التطبيق → Shared Components للوصول إلى جميع المكونات المشتركة."
+      },
+      {
+        q: "ما فائدة استخدام Shared Components بدلاً من إعادة إنشاء المكونات في كل صفحة؟",
+        opts: ["لا فائدة","توفير الوقت وضمان التصميم الموحد وسهولة الإدارة","تسريع قاعدة البيانات","تقليل حجم التطبيق فقط"],
+        ans: 1,
+        exp: "Shared Components توفر الوقت بتجنب التكرار، وتضمن تصميماً موحداً، وتُسهّل إدارة التطبيق من مكان واحد."
+      },
+      {
+        q: "ما ميزة Theme في Shared Components؟",
+        opts: ["يُحدد قواعد SQL","تصميم جاهز يحدد شكل التطبيق بالكامل ويحتوي على قوالب الصفحات والعناصر","يُدير المستخدمين","يُنشئ الجداول"],
+        ans: 1,
+        exp: "Theme تصميم جاهز يحدد الشكل العام للتطبيق بالكامل ويحتوي على قوالب لتنسيق الصفحات والعناصر."
+      },
+      {
+        q: "ما منطقة Files في Shared Components؟",
+        opts: ["لعرض الملفات للمستخدمين","لتخزين الصور وملفات CSS وJavaScript الخاصة بالتطبيق","لتخزين قواعد البيانات","لتصدير التطبيق"],
+        ans: 1,
+        exp: "منطقة Files تُستخدم لتخزين الصور وملفات CSS وJavaScript الخاصة بالتطبيق داخل APEX."
+      }
+    ]
+  },
+  {
+    id: 8,
+    title: "الشابتر 8 – العمليات والتفرعات والأمان",
+    sub: "Processes، Branches، Security",
+    questions: [
+      {
+        q: "ما العمليات (Processes) في Oracle APEX؟",
+        opts: ["تصميم الصفحات","الخطوات أو الأوامر التي ينفذها التطبيق عند حدوث حدث معين","إعدادات المستخدمين","أوامر SQL الثابتة"],
+        ans: 1,
+        exp: "Processes خطوات أو أوامر ينفذها التطبيق عند أحداث معينة مثل تحميل صفحة أو إرسال نموذج."
+      },
+      {
+        q: "ما المرحلة الأولى في Processing Phases عند تنفيذ عملية في APEX؟",
+        opts: ["Validation","Branching","Computation","Processing"],
+        ans: 2,
+        exp: "المرحلة الأولى: Computation (الحساب) يحسب النظام القيم المطلوبة قبل تنفيذ المعالجة."
+      },
+      {
+        q: "ما مرحلة Validation في Processing Phases؟",
+        opts: ["تنفيذ العمليات على قاعدة البيانات","التأكد من أن البيانات المدخلة صحيحة ومنع البيانات الناقصة","تحديد الصفحة التالية","حساب المتغيرات"],
+        ans: 1,
+        exp: "Validation يتأكد من صحة البيانات المدخلة ويمنع إرسال بيانات ناقصة أو غير منطقية."
+      },
+      {
+        q: "ما مرحلة Processing في Processing Phases؟",
+        opts: ["التحقق من البيانات","تحديد الصفحة التالية","تنفيذ العمليات الفعلية مثل الحذف أو الإضافة في قاعدة البيانات","حساب المتغيرات"],
+        ans: 2,
+        exp: "Processing هي مرحلة التنفيذ الفعلي حيث يتفاعل النظام مع قاعدة البيانات لتنفيذ الإضافة أو التعديل أو الحذف."
+      },
+      {
+        q: "ما مرحلة Branching (التفريع) في Processing Phases؟",
+        opts: ["التحقق من البيانات","تنفيذ الأوامر","بعد الانتهاء يقرر النظام الصفحة التالية التي سيُعاد توجيه المستخدم إليها","حساب القيم"],
+        ans: 2,
+        exp: "Branching آخر مرحلة: يُقرر النظام إلى أي صفحة سينتقل المستخدم بعد إتمام العملية."
+      },
+      {
+        q: "ما الترتيب الصحيح لـ Processing Phases في APEX؟",
+        opts: ["Processing → Validation → Computation → Branching","Validation → Computation → Processing → Branching","Computation → Validation → Processing → Branching","Branching → Processing → Validation → Computation"],
+        ans: 2,
+        exp: "الترتيب الصحيح: Computation ثم Validation ثم Processing ثم Branching."
+      },
+      {
+        q: "ما وظيفة التفرعات (Branches) في APEX؟",
+        opts: ["تنفيذ كود SQL","تحديد إلى أين ينتقل المستخدم بعد تنفيذ عملية","عرض البيانات","التحقق من الصحة"],
+        ans: 1,
+        exp: "Branches تُحدد الصفحة أو URL التي ينتقل إليها المستخدم بعد تنفيذ عملية ما."
+      },
+      {
+        q: "ما المصادقة (Authentication) في أمان APEX؟",
+        opts: ["تحديد صلاحيات المستخدم","عملية التحقق من هوية المستخدم للتأكد أنه من يدّعي","تشفير البيانات","إدارة الجلسات"],
+        ans: 1,
+        exp: "Authentication تتحقق من هوية المستخدم قبل السماح له بالدخول للنظام."
+      },
+      {
+        q: "ما التفويض (Authorization) في أمان APEX؟",
+        opts: ["التحقق من هوية المستخدم","تشفير كلمة المرور","تحديد الصلاحيات والموارد التي يُسمح للمستخدم بالوصول إليها","إدارة Session"],
+        ans: 2,
+        exp: "Authorization يحدد ما يُسمح للمستخدم بالوصول إليه بعد التحقق من هويته مثل عرض البيانات فقط أو التعديل والحذف."
+      },
+      {
+        q: "متى تحدث المصادقة (Authentication) مقارنةً بالتفويض (Authorization)؟",
+        opts: ["بعد التفويض","في نفس الوقت","Authentication أولاً قبل الدخول، Authorization بعد الدخول","لا ترتيب بينهما"],
+        ans: 2,
+        exp: "Authentication تحدث أولاً (التحقق من الهوية قبل الدخول). Authorization تحدث بعدها (تحديد الصلاحيات داخل النظام)."
+      },
+      {
+        q: "ما Page Processes في APEX؟",
+        opts: ["تقارير الصفحة","وحدة منطقية تُشغَّل عند حدث معين في الصفحة مثل تحميلها أو إرسال بياناتها","إعدادات تصميم الصفحة","أوامر CSS الصفحة"],
+        ans: 1,
+        exp: "Page Process وحدة منطقية تُشغَّل عند حدث معين في الصفحة سواء عند تحميلها أو عند Submit."
+      },
+      {
+        q: "أي من التالي مثال على طرق المصادقة؟",
+        opts: ["إعطاء صلاحية التعديل","اسم المستخدم وكلمة المرور أو بصمة الإصبع","تصدير التقرير","عرض الصفحة"],
+        ans: 1,
+        exp: "أمثلة المصادقة: اسم المستخدم وكلمة المرور، بصمة الإصبع، البطاقة الذكية، الشهادات الرقمية."
+      },
+      {
+        q: "ما الهدف الرئيسي من تطبيق الأمان (Security) في APEX؟",
+        opts: ["تسريع التطبيق","حماية البيانات ومنع الوصول غير المصرح به","تحسين التصميم","إنشاء تقارير"],
+        ans: 1,
+        exp: "الهدف: حماية البيانات ومنع الوصول غير المصرح به من خلال التحكم في هوية المستخدمين وصلاحياتهم."
+      },
+      {
+        q: "ما يحدث عند رسالة خطأ Error Message بعد تنفيذ عملية في APEX؟",
+        opts: ["يوقف التطبيق","توضح أن هناك خطأ في العملية لإعلام المستخدم بنتيجة الإجراء","تحذف البيانات تلقائياً","تُعيد تشغيل التطبيق"],
+        ans: 1,
+        exp: "رسالة الخطأ توضح للمستخدم أن هناك خطأ في العملية حتى يعرف النتيجة دون البحث اليدوي."
+      }
+    ]
+  }
+];
+
+let currentChapter = null;
+let currentQ = 0;
+let answers = [];
+let answered = false;
+
+function goHome() {
+  document.getElementById('home').style.display = 'flex';
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'none';
+}
+
+function startQuiz(idx) {
+  currentChapter = CHAPTERS[idx];
+  currentQ = 0;
+  answers = new Array(currentChapter.questions.length).fill(null);
+  answered = false;
+
+  // Shuffle questions
+  currentChapter.questions = shuffle([...CHAPTERS[idx].questions]);
+
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  document.getElementById('quizTitle').textContent = currentChapter.title;
+  renderQuestion();
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function renderQuestion() {
+  const q = currentChapter.questions[currentQ];
+  const total = currentChapter.questions.length;
+
+  document.getElementById('qCounter').textContent = `السؤال ${currentQ + 1} من ${total}`;
+  document.getElementById('progressBar').style.width = `${((currentQ) / total) * 100}%`;
+  document.getElementById('questionText').textContent = q.q;
+
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.textContent = opt;
+    btn.onclick = () => selectAnswer(i);
+    container.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.textContent = '';
+
+  document.getElementById('nextBtn').disabled = true;
+  answered = false;
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q = currentChapter.questions[currentQ];
+  answers[currentQ] = idx;
+
+  const opts = document.querySelectorAll('.option');
+  opts.forEach(o => o.classList.add('disabled'));
+  opts[q.ans].classList.add('correct');
+
+  const fb = document.getElementById('feedback');
+  if (idx === q.ans) {
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = '✅ إجابة صحيحة! ' + q.exp;
+  } else {
+    opts[idx].classList.add('wrong');
+    fb.className = 'feedback wrong-fb show';
+    fb.innerHTML = '❌ إجابة خاطئة. ' + q.exp;
+  }
+
+  document.getElementById('nextBtn').disabled = false;
+  const isLast = currentQ === currentChapter.questions.length - 1;
+  document.getElementById('nextBtn').textContent = isLast ? 'عرض النتيجة 🏆' : 'التالي ←';
+}
+
+function nextQuestion() {
+  if (!answered) return;
+  const isLast = currentQ === currentChapter.questions.length - 1;
+  if (isLast) {
+    showResults();
+  } else {
+    currentQ++;
+    renderQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'block';
+
+  const total = currentChapter.questions.length;
+  const correct = answers.filter((a, i) => a === currentChapter.questions[i].ans).length;
+  const pct = Math.round((correct / total) * 100);
+
+  document.getElementById('scoreNum').textContent = `${correct}/${total}`;
+  document.getElementById('scoreCircle').style.setProperty('--pct', `${pct}%`);
+
+  let title = '', sub = '';
+  if (pct >= 90) { title = '🌟 ممتاز!'; sub = 'أداء رائع، أنتِ جاهزة تماماً!'; }
+  else if (pct >= 75) { title = '👍 جيد جداً!'; sub = 'نتيجة قوية، راجعي الأسئلة اللي خطأت فيها.'; }
+  else if (pct >= 60) { title = '📚 جيد'; sub = 'راجعي المحتوى مرة ثانية وأعيدي الاختبار.'; }
+  else { title = '💪 تحتاج مراجعة'; sub = 'لا تيأسين، راجعي الملزمة وحاولي مرة ثانية!'; }
+
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultSub').textContent = sub;
+
+  const list = document.getElementById('breakdownList');
+  list.innerHTML = '';
+  currentChapter.questions.forEach((q, i) => {
+    const isCorrect = answers[i] === q.ans;
+    const div = document.createElement('div');
+    div.className = 'rb-item';
+    div.innerHTML = `<span class="${isCorrect ? 'rb-ok' : 'rb-no'}">${isCorrect ? '✓' : '✗'}</span><span class="q-text">${q.q}</span>`;
+    list.appendChild(div);
+  });
+}
+
+function retryQuiz() {
+  const idx = CHAPTERS.findIndex(c => c.id === currentChapter.id);
+  startQuiz(idx);
+}
+
+// Build home grid
+const grid = document.getElementById('chaptersGrid');
+CHAPTERS.forEach((ch, i) => {
+  const card = document.createElement('div');
+  card.className = 'chapter-card';
+  card.innerHTML = `
+    <div class="chapter-num">${ch.id}</div>
+    <div class="chapter-info">
+      <h3>${ch.title}</h3>
+      <p>${ch.sub}</p>
+    </div>`;
+  card.onclick = () => startQuiz(i);
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>
